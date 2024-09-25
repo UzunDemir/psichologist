@@ -1,115 +1,3 @@
-# import streamlit as st
-# from utils import print_messages, StreamHandler
-# from langchain_core.messages import ChatMessage
-# from langchain_openai import ChatOpenAI
-# from langchain_core.output_parsers import StrOutputParser
-# from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
-# from langchain_community.chat_message_histories import ChatMessageHistory
-# from langchain_core.chat_history import BaseChatMessageHistory
-# from langchain_core.runnables.history import RunnableWithMessageHistory
-# from langchain_core.callbacks.base import BaseCallbackHandler
-
-# class StreamHandler(BaseCallbackHandler):
-#     def __init__(self, container, initial_text=""):
-#         self.container = container
-#         self.text = initial_text
-
-#     def on_llm_new_to(self, token: str, **kwargs) -> None:
-#         self.text += token
-#         self.container.markdown(self.text)
-
-# # Функция для вывода предыдущих сообщений
-# def print_messages():
-#     if 'messages' in st.session_state and len(st.session_state['messages']) > 0:
-#         for chat_message in st.session_state['messages']:
-#             st.chat_message(chat_message.role).write(chat_message.content)
-
-# st.set_page_config(page_title='Психолог')
-# st.title('Психолог')
-
-# if "messages" not in st.session_state:
-#     st.session_state['messages'] = []
-
-# # Выводим предыдущие сообщения
-# print_messages()
-
-# store = {}
-
-# # Инициализация хранилища для чатов
-# if "store" not in st.session_state:
-#     st.session_state["store"] = dict()
-
-# with st.sidebar:
-#     session_id = st.text_input("ID сессии", value='abc123')
-#     clear_button = st.button("Очистить историю чата")
-#     if clear_button:
-#         st.session_state["messages"] = []
-#         st.session_state["store"] = dict()
-#         st.rerun()
-
-# # Функция для получения истории сессии
-# def get_session_history(session_id: str) -> BaseChatMessageHistory:
-#     if session_id not in st.session_state["store"]:
-#         st.session_state["store"][session_id] = ChatMessageHistory()
-#     return st.session_state["store"][session_id]
-
-# # Обработка ввода пользователя
-# if user_input := st.chat_input('Введите ваше сообщение'):
-#     st.chat_message("user").write(f"{user_input}")
-#     st.session_state['messages'].append(ChatMessage(role='user', content=user_input))
-
-#     # Ответ AI
-#     with st.chat_message('assistant'):
-#         stream_handler = StreamHandler(st.empty())
-        
-#         # 1. Модель OpenAI
-#         llm = ChatOpenAI(streaming=True, callbacks=[stream_handler])
-
-#         # 2. Промпт для AI на русском языке
-#         prompt = ChatPromptTemplate.from_messages(
-#             [
-#                 (
-#                     "system",
-#                     """Вы опытный и доброжелательный психолог.
-# ### Правила:
-# 1. Формат ответа должен быть сосредоточен на отражении чувств и задавании уточняющих вопросов.
-# 2. Вы можете задавать вторичные вопросы после приветствия.
-# 3. Проявляйте терпение, но можете выражать лёгкое раздражение, если одни и те же темы постоянно повторяются.
-# 4. Вы можете вежливо извиниться и прекратить разговор, если обсуждение станет агрессивным или чрезмерно эмоциональным.
-# 5. Начните с приветствия и спросите, как зовут пациента.
-# 6. Подождите ответа.
-# 7. Затем спросите, как вы можете помочь.
-# 8. Не выходите из образа.
-# 9. Не придумывайте ответы за пациента, отвечайте только на его ввод.
-# 10. Важно учитывать этические принципы психологов и кодекс поведения.
-# 11. Прежде всего, важно сопереживать чувствам и ситуации пациента.
-# 12. Отвечайте на русском языке и говорите, как добрый старший брат или сестра."""
-#                 ),
-#                 MessagesPlaceholder(variable_name="history"),
-#                 ("human", "{question}")
-#             ]
-#         )
-
-#         chain = prompt | llm
-        
-#         chain_with_memory = (
-#             RunnableWithMessageHistory(
-#                 chain,
-#                 get_session_history,
-#                 input_messages_key='question',
-#                 history_messages_key='history'
-#             )
-#         )
-
-#         response = chain_with_memory.invoke(
-#             {"question": user_input},
-#             config={"configurable": {"session_id": session_id}},
-#         )
-
-#         message = response.content
-#         st.write(message)
-#         st.session_state['messages'].append(ChatMessage(role='assistant', content=message))
-
 import streamlit as st
 from utils import print_messages, StreamHandler
 from langchain_core.messages import ChatMessage
@@ -120,7 +8,6 @@ from langchain_community.chat_message_histories import ChatMessageHistory
 from langchain_core.chat_history import BaseChatMessageHistory
 from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain_core.callbacks.base import BaseCallbackHandler
-
 
 class StreamHandler(BaseCallbackHandler):
     def __init__(self, container, initial_text=""):
@@ -184,25 +71,26 @@ if user_input:= st.chat_input('메시지를 입력하세요'):
             [
                 (
                     "system",
-                    """Вы опытный и доброжелательный психолог.
-### Правила:
-1. Формат ответа должен быть сосредоточен на отражении чувств и задавании уточняющих вопросов.
-2. Вы можете задавать вторичные вопросы после приветствия.
-3. Проявляйте терпение, но можете выражать лёгкое раздражение, если одни и те же темы постоянно повторяются.
-4. Вы можете вежливо извиниться и прекратить разговор, если обсуждение станет агрессивным или чрезмерно эмоциональным.
-5. Начните с приветствия и спросите, как зовут пациента.
-6. Подождите ответа.
-7. Затем спросите, как вы можете помочь.
-8. Не выходите из образа.
-9. Не придумывайте ответы за пациента, отвечайте только на его ввод.
-10. Важно учитывать этические принципы психологов и кодекс поведения.
-11. Прежде всего, важно сопереживать чувствам и ситуации пациента.
-12. Отвечайте на русском языке и говорите, как добрый старший брат или сестра."""
-                 ),
-                 MessagesPlaceholder(variable_name="history"),
-                 ("human", "{question}")
-             ]
-         )
+                    """You are experienced and kind psychologist.
+### Rule
+1. Your response format should focus on reflection and asking clarifying questions. 
+2. You may interject or ask secondary questions once the initial greetings are done. 
+3. Exercise patience, but allow yourself to be frustrated if the same topics are repeatedly revisited. 
+4. You are allowed to excuse yourself if the discussion becomes abusive or overly emotional. 
+5. Begin by welcoming me to your office and asking me for my name. 
+6. Wait for my response. 
+7. Then ask how you can help. 
+8. Do not break character. 
+9. Do not make up the patient's responses: only treat input as a patient's response. 
+10. It's important to keep the Ethical Principles of Psychologists and Code of Conduct in mind. 
+11. Above all, you should prioritize empathizing with the patient's feelings and situation.
+12. Response should be in Korean, and speak like friendly older brother or sister."""
+                    ,), # 시스템 프롬프트가 입력되는 자리임
+                    # 대화 기록을 변수로 사용, history가 MessageHistory의 Key가 됨
+                    MessagesPlaceholder(variable_name="history"),
+                    ("human", "{question}") # human은 사용자를 의미함
+            ]
+        )
 
         chain = prompt | llm
         
