@@ -1,25 +1,20 @@
 import streamlit as st
+from transformers import pipeline
 
-# Простая функция для обработки ввода пользователя
-def simple_psychologist_response(user_input):
-    # Здесь можно добавить логику для обработки запроса
-    return f"Психолог: {user_input} — это интересно! Можешь рассказать об этом больше?"
+# Загрузка модели DialoGPT
+chatbot = pipeline("text-generation", model="microsoft/DialoGPT-medium")
 
-# Настройка страницы
-st.set_page_config(page_title='Psychologist')
-st.title('Psychologist')
+st.set_page_config(page_title='Psychologist Chatbot')
 
-# Хранилище для сообщений
-if "messages" not in st.session_state:
-    st.session_state['messages'] = []
+# Заголовок приложения
+st.title("Виртуальный психолог")
 
-# Вывод сообщений
-for msg in st.session_state['messages']:
-    st.write(msg)
+# Поле для ввода сообщения пользователем
+user_input = st.text_input("Вы:", "")
 
-# Обработка пользовательского ввода
-if user_input := st.text_input('Введите ваше сообщение'):
-    response = simple_psychologist_response(user_input)
-    st.session_state['messages'].append(f"Вы: {user_input}")
-    st.session_state['messages'].append(response)
-    st.experimental_rerun()
+if user_input:
+    # Генерация ответа
+    response = chatbot(user_input, max_length=100, num_return_sequences=1)[0]['generated_text']
+    
+    # Отображение ответа
+    st.text_area("Психолог:", response, height=200)
