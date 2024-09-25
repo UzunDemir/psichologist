@@ -1,6 +1,6 @@
 
 import streamlit as st
-pip install transformers
+
 from transformers import pipeline
 
 # Загрузка модели DialoGPT
