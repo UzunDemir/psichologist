@@ -5,4 +5,4 @@ langchain-openai>=0.0.8
 langchain-community>=0.0.7
 transformers
 tensorflow
-pytorch
+
