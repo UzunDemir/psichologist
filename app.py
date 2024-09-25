@@ -121,6 +121,10 @@ from langchain_core.chat_history import BaseChatMessageHistory
 from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain_core.callbacks.base import BaseCallbackHandler
 
+import os
+# API 키 설정
+os.environ['OPENAI_API_KEY'] = st.secrets['OPENAI_API_KEY']
+
 class StreamHandler(BaseCallbackHandler):
     def __init__(self, container, initial_text=""):
         self.container = container
